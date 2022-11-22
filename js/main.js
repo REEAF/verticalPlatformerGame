@@ -1,12 +1,6 @@
 const $canvas = document.querySelector("canvas");
 const c = $canvas.getContext("2d");
 
-const player = new Player();
-const background = new Sprite({
-  position: { x: 0, y: 0 },
-  imageSrc: "./img/background.png",
-});
-
 const gravity = 0.5;
 const scaleFactor = 4;
 const baseBlockSize = 16;
@@ -62,6 +56,17 @@ platformCollisions2D.forEach((row, y) => {
     }
   });
 });
+
+const player = new Player({
+  position: { x: 0, y: 0 },
+  collisionBlocks,
+});
+
+const background = new Sprite({
+  position: { x: 0, y: 0 },
+  imageSrc: "./img/background.png",
+});
+
 function animation() {
   window.requestAnimationFrame(animation);
   //clear canvas
@@ -78,9 +83,8 @@ function animation() {
   platformCollisionBlocks.forEach((collisionBlock) => {
     collisionBlock.update();
   });
-  c.restore();
-
   player.update();
+  c.restore();
 }
 
 animation();
@@ -94,10 +98,10 @@ window.addEventListener("keydown", (e) => {
       keys.d.pressed = true;
       break;
     case "KeyW":
-      player.velocity.y = -15;
+      player.velocity.y = -8;
       break;
     case "Space":
-      player.velocity.y = -15;
+      player.velocity.y = -8;
       break;
   }
 });
