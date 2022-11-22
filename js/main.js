@@ -5,7 +5,14 @@ cWidth = $canvas.width = 1024;
 cHeigth = $canvas.height = 576;
 
 const gravity = 0.5;
-
+const keys = {
+  a: {
+    pressed: false,
+  },
+  d: {
+    pressed: false,
+  },
+};
 //ser player class
 class Player {
   constructor() {
@@ -15,7 +22,7 @@ class Player {
     };
     this.velocity = {
       x: 0,
-      y: 0.5,
+      y: 0,
     };
     this.height = 100;
     this.width = 100;
@@ -26,12 +33,20 @@ class Player {
   }
   gravity() {
     this.position.y += this.velocity.y;
-    if (this.position.y + this.height + this.velocity.y< cHeigth) this.velocity.y += gravity;
+    if (this.position.y + this.height + this.velocity.y < cHeigth)
+      this.velocity.y += gravity;
     else this.velocity.y = 0;
   }
+  move() {
+    this.velocity.x = 0
+    if(keys.d.pressed)this.velocity.x = 5
+    else if(keys.a.pressed)this.velocity.x = -5
+    this.position.x += this.velocity.x;
+  }
   update() {
-    this.draw();
     this.gravity();
+    this.move();
+    this.draw();
   }
 }
 
@@ -46,3 +61,26 @@ function animation() {
 }
 
 animation();
+window.addEventListener("keydown", (e) => {
+  switch (e.key) {
+    case "a":
+      keys.a.pressed = true;
+      break;
+    case "d":
+      keys.d.pressed = true;
+      break;
+    case "w":
+      player.velocity.y = -15;
+      break;
+  }
+});
+window.addEventListener("keyup", (e) => {
+  switch (e.key) {
+    case "a":
+      keys.a.pressed = false;
+      break;
+    case "d":
+      keys.d.pressed = false;
+      break;
+  }
+});
