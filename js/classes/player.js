@@ -1,18 +1,14 @@
-class Player {
-  constructor({ position, collisionBlocks }) {
+class Player extends Sprite {
+  constructor({ position, collisionBlocks, imageSrc, frameRate, scale = 0.5 }) {
+    super({ imageSrc, frameRate, scale });
     this.position = position;
     this.velocity = {
       x: 0,
       y: 0,
     };
-    this.height = 25;
-    this.width = 25;
     this.collisionBlocks = collisionBlocks;
   }
-  draw() {
-    c.fillStyle = "red";
-    c.fillRect(this.position.x, this.position.y, this.width, this.height);
-  }
+
   checkHorisontalCollision() {
     for (let i = 0; i < this.collisionBlocks.length; i++) {
       const collisionBlock = this.collisionBlocks[i];
@@ -66,11 +62,13 @@ class Player {
     this.position.x += this.velocity.x;
   }
   update() {
+    c.fillStyle = "rgba(0,255,0,0.2";
+    c.fillRect(this.position.x, this.position.y, this.width, this.height);
+    this.updateFrames();
     this.move();
     this.checkHorisontalCollision();
     this.applygravity();
     this.checkVerticalCollision();
-
     this.draw();
   }
 }
