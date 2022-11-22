@@ -62,24 +62,28 @@ function animation() {
 
 animation();
 window.addEventListener("keydown", (e) => {
-  switch (e.key) {
-    case "a":
+  switch (e.code) {
+    case "KeyA":
       keys.a.pressed = true;
       break;
-    case "d":
+    case "KeyD":
       keys.d.pressed = true;
       break;
-    case "w":
+    case "KeyW":
+      player.velocity.y = -15;
+      break;
+      case "Space":
       player.velocity.y = -15;
       break;
   }
 });
+
 window.addEventListener("keyup", (e) => {
-  switch (e.key) {
-    case "a":
+  switch (e.code) {
+    case "KeyA":
       keys.a.pressed = false;
       break;
-    case "d":
+    case "KeyD":
       keys.d.pressed = false;
       break;
   }
