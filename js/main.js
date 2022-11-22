@@ -9,6 +9,7 @@ const background = new Sprite({
 
 const gravity = 0.5;
 const scaleFactor = 4;
+const baseBlockSize = 16;
 
 //set canvas size
 cWidth = $canvas.width = 1024;
@@ -27,6 +28,40 @@ const keys = {
   },
 };
 
+const floorCollisions2D = [];
+for (let i = 0; i < floorCollisions.length; i += 36) {
+  floorCollisions2D.push(floorCollisions.slice(i, i + 36));
+}
+
+const collisionBlocks = [];
+floorCollisions2D.forEach((row, y) => {
+  row.forEach((symbol, x) => {
+    if (symbol !== 0) {
+      collisionBlocks.push(
+        new collisionBlock({
+          position: { x: x * baseBlockSize, y: y * baseBlockSize },
+        })
+      );
+    }
+  });
+});
+
+const platformCollisions2D = [];
+for (let i = 0; i < platformCollisions.length; i += 36) {
+  platformCollisions2D.push(platformCollisions.slice(i, i + 36));
+}
+const platformCollisionBlocks = [];
+platformCollisions2D.forEach((row, y) => {
+  row.forEach((symbol, x) => {
+    if (symbol !== 0) {
+      platformCollisionBlocks.push(
+        new collisionBlock({
+          position: { x: x * baseBlockSize, y: y * baseBlockSize },
+        })
+      );
+    }
+  });
+});
 function animation() {
   window.requestAnimationFrame(animation);
   //clear canvas
@@ -37,6 +72,12 @@ function animation() {
   c.scale(4, 4);
   c.translate(0, -background.image.height + scaledCanvas.height);
   background.update();
+  collisionBlocks.forEach((collisionBlock) => {
+    collisionBlock.update();
+  });
+  platformCollisionBlocks.forEach((collisionBlock) => {
+    collisionBlock.update();
+  });
   c.restore();
 
   player.update();
