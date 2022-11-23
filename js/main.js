@@ -62,6 +62,48 @@ const player = new Player({
   collisionBlocks,
   imageSrc: "./img/avatars/warrior/Idle.png",
   frameRate: 8,
+  animations: {
+    idle_right: {
+      imageSrc: "./img/avatars/warrior/Idle.png",
+      frameRate: 8,
+      frameBuffer: 10,
+    },
+    idle_left: {
+      imageSrc: "./img/avatars/warrior/IdleLeft.png",
+      frameRate: 8,
+      frameBuffer: 10,
+    },
+    run_right: {
+      imageSrc: "./img/avatars/warrior/Run.png",
+      frameRate: 8,
+      frameBuffer: 7,
+    },
+    run_left: {
+      imageSrc: "./img/avatars/warrior/RunLeft.png",
+      frameRate: 8,
+      frameBuffer: 7,
+    },
+    jump_right: {
+      imageSrc: "./img/avatars/warrior/Jump.png",
+      frameRate: 2,
+      frameBuffer: 4,
+    },
+    jump_left: {
+      imageSrc: "./img/avatars/warrior/JumpLeft.png",
+      frameRate: 2,
+      frameBuffer: 4,
+    },
+    fall_right: {
+      imageSrc: "./img/avatars/warrior/Fall.png",
+      frameRate: 2,
+      frameBuffer: 4,
+    },
+    fall_left: {
+      imageSrc: "./img/avatars/warrior/FallLeft.png",
+      frameRate: 2,
+      frameBuffer: 4,
+    },
+  },
 });
 
 const background = new Sprite({
