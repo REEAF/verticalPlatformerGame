@@ -43,13 +43,19 @@ class Sprite {
       this.height
     );
   }
-  updateFrames() {
+  updateFrames(direction = "right") {
     this.ellapsedFrames++;
     if (this.ellapsedFrames % this.frameBuffer === 0) {
-      if (this.currentFrame < this.frameRate - 1) this.currentFrame++;
-      else this.currentFrame = 0;
+      if (direction === "right") {
+        if (this.currentFrame < this.frameRate - 1) this.currentFrame++;
+        else this.currentFrame = 0;
+      } else {
+        if (this.currentFrame == 0) this.currentFrame = this.frameRate - 1;
+        else this.currentFrame--;
+      }
     }
   }
+
   update() {
     this.draw();
     this.updateFrames();

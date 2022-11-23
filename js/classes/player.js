@@ -192,7 +192,9 @@ class Player extends Sprite {
 
   switchSprite(key) {
     if (this.image === this.animations[key].image || !this.loaded) return;
-    this.currentFrame = 0;
+    this.faceDirection === "right"
+      ? (this.currentFrame = 0)
+      : (this.currentFrame = this.animations[key].frameRate - 1);
     this.image = this.animations[key].image;
     this.frameBuffer = this.animations[key].frameBuffer;
     this.frameRate = this.animations[key].frameRate;
@@ -231,9 +233,10 @@ class Player extends Sprite {
   }
 
   update() {
-    this.updateFrames();
+    this.updateFrames(this.faceDirection);
     this.updateHitBox();
     this.updateCameraBox();
+    /*------------------<DEV>------------------
     // draw the camerabox
     c.fillStyle = "rgba(0,0,255,0.2";
     c.fillRect(
@@ -250,6 +253,7 @@ class Player extends Sprite {
       this.hitbox.width,
       this.hitbox.height
     );
+     ------------------</DEV>------------------*/
     this.draw();
     this.move();
     this.updateHitBox();

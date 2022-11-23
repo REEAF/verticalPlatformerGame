@@ -60,7 +60,7 @@ platformCollisions2D.forEach((row, y) => {
 });
 
 const player = new Player({
-  position: { x: 100, y: 300 },
+  position: { x: -25, y: 280 },
   collisionBlocks,
   platformCollisionBlocks,
   imageSrc: "./img/avatars/warrior/Idle.png",
@@ -122,20 +122,26 @@ const camera = {
 };
 function animation() {
   window.requestAnimationFrame(animation);
+  /*------------------<DEV>------------------
   //clear canvas
   c.fillStyle = "#333333";
   c.fillRect(0, 0, cWidth, cHeigth);
+  ------------------</DEV>------------------*/
+
   //setup background
   c.save();
   c.scale(4, 4);
   c.translate(camera.position.x, camera.position.y);
   background.update();
+  /*------------------<DEV>------------------
+  //draw collision blocks
   collisionBlocks.forEach((collisionBlock) => {
     collisionBlock.update();
   });
   platformCollisionBlocks.forEach((collisionBlock) => {
     collisionBlock.update();
   });
+   ------------------</DEV>------------------*/
   player.update();
   c.restore();
 }
@@ -149,7 +155,6 @@ window.addEventListener("keydown", (e) => {
       break;
     case "KeyD":
       keys.d.pressed = true;
-      console.log("f");
       player.shouldPanCameraToTheLeft({ canvas: scaledCanvas, camera });
       break;
     case "KeyW":
