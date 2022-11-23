@@ -64,9 +64,9 @@ class Player extends Sprite {
       }
     }
   }
+
   shouldPanCameraToTheLeft() {
     // scaledCanvas & camera & bgImageWidth are gloabl values
-
     const cameraBoxRightSide = this.camerabox.position.x + this.camerabox.width;
     if (cameraBoxRightSide >= bgImageWidth) return;
     if (
@@ -76,14 +76,38 @@ class Player extends Sprite {
       camera.position.x -= this.velocity.x;
     }
   }
+
   shouldPanCameraToTheRight() {
     // scaledCanvas & camera are gloabl values
-
     if (this.camerabox.position.x <= 0) return;
     if (this.camerabox.position.x <= Math.abs(camera.position.x)) {
       camera.position.x -= this.velocity.x;
     }
   }
+
+  shouldPanCameraDown() {
+    // scaledCanvas & camera are gloabl values
+    if (this.camerabox.position.y + this.velocity.y <= 0) return;
+    if (this.camerabox.position.y <= Math.abs(camera.position.y)) {
+      camera.position.y -= this.velocity.y;
+    }
+  }
+
+  shouldPanCameraUp() {
+    // scaledCanvas & camera & bgImageHeight are gloabl values
+    if (
+      this.camerabox.position.y + this.camerabox.height + this.velocity.y >=
+      bgImageHeight
+    )
+      return;
+    if (
+      this.camerabox.position.y + this.camerabox.height >=
+      Math.abs(camera.position.y) + scaledCanvas.height
+    ) {
+      camera.position.y -= this.velocity.y;
+    }
+  }
+
   updateHitBox() {
     let offset = 0;
     this.faceDirection === "right" ? (offset = 38) : (offset = 32);
@@ -95,6 +119,7 @@ class Player extends Sprite {
       },
     };
   }
+
   updateCameraBox() {
     this.camerabox = {
       ...this.camerabox,
@@ -104,10 +129,13 @@ class Player extends Sprite {
       },
     };
   }
+
   applyGravity() {
-    this.velocity.y += gravity;
+    //gravity is global value
+    if (this.velocity.y < platformHeight) this.velocity.y += gravity;
     this.position.y += this.velocity.y;
   }
+
   checkVerticalCollision() {
     //check for ground collision
     for (let i = 0; i < this.collisionBlocks.length; i++) {
@@ -151,8 +179,9 @@ class Player extends Sprite {
       }
     }
   }
-  //bgImageWidth is global value
+
   checkHorizonralCanvasCollision() {
+    //bgImageWidth is global value
     if (
       this.hitbox.position.x + this.hitbox.width + this.velocity.x / 2 >=
         bgImageWidth ||
@@ -160,6 +189,7 @@ class Player extends Sprite {
     )
       this.velocity.x = 0;
   }
+
   switchSprite(key) {
     if (this.image === this.animations[key].image || !this.loaded) return;
     this.currentFrame = 0;
@@ -167,6 +197,7 @@ class Player extends Sprite {
     this.frameBuffer = this.animations[key].frameBuffer;
     this.frameRate = this.animations[key].frameRate;
   }
+
   move() {
     this.velocity.x = 0;
     if (keys.d.pressed) {
@@ -185,17 +216,20 @@ class Player extends Sprite {
       this.faceDirection === "right"
         ? this.switchSprite("idle_right")
         : this.switchSprite("idle_left");
-
-    if (this.velocity.y < 0)
+    if (this.velocity.y < 0) {
       this.faceDirection === "right"
         ? this.switchSprite("jump_right")
         : this.switchSprite("jump_left");
-    else if (this.velocity.y > 0)
+      this.shouldPanCameraDown();
+    } else if (this.velocity.y > 0) {
+      this.shouldPanCameraUp();
       this.faceDirection === "right"
         ? this.switchSprite("fall_right")
         : this.switchSprite("fall_left");
+    }
     this.position.x += this.velocity.x;
   }
+
   update() {
     this.updateFrames();
     this.updateHitBox();

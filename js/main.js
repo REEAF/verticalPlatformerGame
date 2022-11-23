@@ -1,10 +1,11 @@
 const $canvas = document.querySelector("canvas");
 const c = $canvas.getContext("2d");
-
+const platformHeight = 4;
 const gravity = 0.2;
 const scaleFactor = 4;
 const baseBlockSize = 16;
 const bgImageWidth = 576;
+const bgImageHeight = 432;
 //set canvas size
 cWidth = $canvas.width = 1024;
 cHeigth = $canvas.height = 576;
@@ -51,7 +52,7 @@ platformCollisions2D.forEach((row, y) => {
       platformCollisionBlocks.push(
         new collisionBlock({
           position: { x: x * baseBlockSize, y: y * baseBlockSize },
-          height: 4,
+          height: platformHeight,
         })
       );
     }
@@ -88,22 +89,22 @@ const player = new Player({
     jump_right: {
       imageSrc: "./img/avatars/warrior/Jump.png",
       frameRate: 2,
-      frameBuffer: 4,
+      frameBuffer: 10,
     },
     jump_left: {
       imageSrc: "./img/avatars/warrior/JumpLeft.png",
       frameRate: 2,
-      frameBuffer: 4,
+      frameBuffer: 10,
     },
     fall_right: {
       imageSrc: "./img/avatars/warrior/Fall.png",
       frameRate: 2,
-      frameBuffer: 4,
+      frameBuffer: 10,
     },
     fall_left: {
       imageSrc: "./img/avatars/warrior/FallLeft.png",
       frameRate: 2,
-      frameBuffer: 4,
+      frameBuffer: 10,
     },
   },
 });
@@ -112,10 +113,11 @@ const background = new Sprite({
   position: { x: 0, y: 0 },
   imageSrc: "./img/background.png",
 });
+// use static value instead of background.image.height - need some time to load
 const camera = {
   position: {
     x: 0,
-    y: 0,
+    y: -bgImageHeight + scaledCanvas.height,
   },
 };
 function animation() {
@@ -126,10 +128,7 @@ function animation() {
   //setup background
   c.save();
   c.scale(4, 4);
-  c.translate(
-    camera.position.x,
-    -background.image.height + scaledCanvas.height
-  );
+  c.translate(camera.position.x, camera.position.y);
   background.update();
   collisionBlocks.forEach((collisionBlock) => {
     collisionBlock.update();
