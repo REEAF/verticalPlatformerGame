@@ -21,8 +21,16 @@ class Player extends Sprite {
         x: this.position.x,
         y: this.position.y,
       },
-      width: 16,
+      width: 10,
       height: 27,
+    };
+    this.camerabox = {
+      position: {
+        x: this.position.x,
+        y: this.position.y,
+      },
+      width: 200,
+      height: 80,
     };
     this.faceDirection = "right";
     this.animations = animations;
@@ -56,12 +64,43 @@ class Player extends Sprite {
       }
     }
   }
+  shouldPanCameraToTheLeft() {
+    // scaledCanvas & camera & bgImageWidth are gloabl values
+
+    const cameraBoxRightSide = this.camerabox.position.x + this.camerabox.width;
+    if (cameraBoxRightSide >= bgImageWidth) return;
+    if (
+      cameraBoxRightSide >=
+      scaledCanvas.width + Math.abs(camera.position.x)
+    ) {
+      camera.position.x -= this.velocity.x;
+    }
+  }
+  shouldPanCameraToTheRight() {
+    // scaledCanvas & camera are gloabl values
+
+    if (this.camerabox.position.x <= 0) return;
+    if (this.camerabox.position.x <= Math.abs(camera.position.x)) {
+      camera.position.x -= this.velocity.x;
+    }
+  }
   updateHitBox() {
+    let offset = 0;
+    this.faceDirection === "right" ? (offset = 38) : (offset = 32);
     this.hitbox = {
       ...this.hitbox,
       position: {
-        x: this.position.x + 32,
+        x: this.position.x + offset,
         y: this.position.y + 26,
+      },
+    };
+  }
+  updateCameraBox() {
+    this.camerabox = {
+      ...this.camerabox,
+      position: {
+        x: this.position.x - 50,
+        y: this.position.y,
       },
     };
   }
@@ -101,7 +140,7 @@ class Player extends Sprite {
           object2: platformCollisionBlock,
         })
       ) {
-        //setup for ground collision
+        //setup for platform collision
         if (this.velocity.y > 0) {
           this.velocity.y = 0;
           const offset =
@@ -109,19 +148,17 @@ class Player extends Sprite {
           this.position.y = platformCollisionBlock.position.y - offset - 0.01;
           break;
         }
-        //setup for ceiling collision
-        // if (this.velocity.y < 0) {
-        //   this.velocity.y = 0;
-        //   const offset = this.hitbox.position.y - this.position.y;
-        //   this.position.y =
-        //     platformCollisionBlock.position.y +
-        //     platformCollisionBlock.height -
-        //     offset +
-        //     0.01;
-        //   break;
-        // }
       }
     }
+  }
+  //bgImageWidth is global value
+  checkHorizonralCanvasCollision() {
+    if (
+      this.hitbox.position.x + this.hitbox.width + this.velocity.x / 2 >=
+        bgImageWidth ||
+      this.hitbox.position.x + this.velocity.x / 2 <= 0
+    )
+      this.velocity.x = 0;
   }
   switchSprite(key) {
     if (this.image === this.animations[key].image || !this.loaded) return;
@@ -136,10 +173,14 @@ class Player extends Sprite {
       this.faceDirection = "right";
       this.switchSprite("run_right");
       this.velocity.x = 2;
+      this.checkHorizonralCanvasCollision();
+      this.shouldPanCameraToTheLeft({ canvas: scaledCanvas, camera });
     } else if (keys.a.pressed) {
       this.faceDirection = "left";
       this.switchSprite("run_left");
       this.velocity.x = -2;
+      this.checkHorizonralCanvasCollision();
+      this.shouldPanCameraToTheRight();
     } else if (this.velocity.y === 0)
       this.faceDirection === "right"
         ? this.switchSprite("idle_right")
@@ -158,9 +199,15 @@ class Player extends Sprite {
   update() {
     this.updateFrames();
     this.updateHitBox();
-    // draw the image
-    c.fillStyle = "rgba(0,255,0,0.2";
-    c.fillRect(this.position.x, this.position.y, this.width, this.height);
+    this.updateCameraBox();
+    // draw the camerabox
+    c.fillStyle = "rgba(0,0,255,0.2";
+    c.fillRect(
+      this.camerabox.position.x,
+      this.camerabox.position.y,
+      this.camerabox.width,
+      this.camerabox.height
+    );
     //draw hitbox
     c.fillStyle = "rgba(255,0,0,0.2";
     c.fillRect(
@@ -171,7 +218,6 @@ class Player extends Sprite {
     );
     this.draw();
     this.move();
-
     this.updateHitBox();
     this.checkHorisontalCollision();
     this.applyGravity();

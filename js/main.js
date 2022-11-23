@@ -4,7 +4,7 @@ const c = $canvas.getContext("2d");
 const gravity = 0.2;
 const scaleFactor = 4;
 const baseBlockSize = 16;
-
+const bgImageWidth = 576;
 //set canvas size
 cWidth = $canvas.width = 1024;
 cHeigth = $canvas.height = 576;
@@ -112,7 +112,12 @@ const background = new Sprite({
   position: { x: 0, y: 0 },
   imageSrc: "./img/background.png",
 });
-
+const camera = {
+  position: {
+    x: 0,
+    y: 0,
+  },
+};
 function animation() {
   window.requestAnimationFrame(animation);
   //clear canvas
@@ -121,7 +126,10 @@ function animation() {
   //setup background
   c.save();
   c.scale(4, 4);
-  c.translate(0, -background.image.height + scaledCanvas.height);
+  c.translate(
+    camera.position.x,
+    -background.image.height + scaledCanvas.height
+  );
   background.update();
   collisionBlocks.forEach((collisionBlock) => {
     collisionBlock.update();
@@ -142,6 +150,8 @@ window.addEventListener("keydown", (e) => {
       break;
     case "KeyD":
       keys.d.pressed = true;
+      console.log("f");
+      player.shouldPanCameraToTheLeft({ canvas: scaledCanvas, camera });
       break;
     case "KeyW":
       player.velocity.y = -5;
