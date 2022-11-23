@@ -1,7 +1,7 @@
 const $canvas = document.querySelector("canvas");
 const c = $canvas.getContext("2d");
 
-const gravity = 0.5;
+const gravity = 0.2;
 const scaleFactor = 4;
 const baseBlockSize = 16;
 
@@ -51,6 +51,7 @@ platformCollisions2D.forEach((row, y) => {
       platformCollisionBlocks.push(
         new collisionBlock({
           position: { x: x * baseBlockSize, y: y * baseBlockSize },
+          height: 4,
         })
       );
     }
@@ -60,6 +61,7 @@ platformCollisions2D.forEach((row, y) => {
 const player = new Player({
   position: { x: 100, y: 300 },
   collisionBlocks,
+  platformCollisionBlocks,
   imageSrc: "./img/avatars/warrior/Idle.png",
   frameRate: 8,
   animations: {
@@ -142,10 +144,10 @@ window.addEventListener("keydown", (e) => {
       keys.d.pressed = true;
       break;
     case "KeyW":
-      player.velocity.y = -8;
+      player.velocity.y = -5;
       break;
     case "Space":
-      player.velocity.y = -8;
+      player.velocity.y = -5;
       break;
   }
 });

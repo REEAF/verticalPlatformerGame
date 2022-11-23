@@ -2,6 +2,7 @@ class Player extends Sprite {
   constructor({
     position,
     collisionBlocks,
+    platformCollisionBlocks,
     imageSrc,
     frameRate,
     scale = 0.5,
@@ -14,13 +15,14 @@ class Player extends Sprite {
       y: 0,
     };
     this.collisionBlocks = collisionBlocks;
+    this.platformCollisionBlocks = platformCollisionBlocks;
     this.hitbox = {
       position: {
         x: this.position.x,
         y: this.position.y,
       },
-      width: 10,
-      height: 10,
+      width: 16,
+      height: 27,
     };
     this.faceDirection = "right";
     this.animations = animations;
@@ -56,12 +58,11 @@ class Player extends Sprite {
   }
   updateHitBox() {
     this.hitbox = {
+      ...this.hitbox,
       position: {
         x: this.position.x + 32,
         y: this.position.y + 26,
       },
-      width: 16,
-      height: 27,
     };
   }
   applyGravity() {
@@ -69,6 +70,7 @@ class Player extends Sprite {
     this.position.y += this.velocity.y;
   }
   checkVerticalCollision() {
+    //check for ground collision
     for (let i = 0; i < this.collisionBlocks.length; i++) {
       const collisionBlock = this.collisionBlocks[i];
       if (collision({ object1: this.hitbox, object2: collisionBlock })) {
@@ -90,9 +92,40 @@ class Player extends Sprite {
         }
       }
     }
+    //check platform collision
+    for (let i = 0; i < this.platformCollisionBlocks.length; i++) {
+      const platformCollisionBlock = this.platformCollisionBlocks[i];
+      if (
+        platformCollision({
+          object1: this.hitbox,
+          object2: platformCollisionBlock,
+        })
+      ) {
+        //setup for ground collision
+        if (this.velocity.y > 0) {
+          this.velocity.y = 0;
+          const offset =
+            this.hitbox.position.y - this.position.y + this.hitbox.height;
+          this.position.y = platformCollisionBlock.position.y - offset - 0.01;
+          break;
+        }
+        //setup for ceiling collision
+        // if (this.velocity.y < 0) {
+        //   this.velocity.y = 0;
+        //   const offset = this.hitbox.position.y - this.position.y;
+        //   this.position.y =
+        //     platformCollisionBlock.position.y +
+        //     platformCollisionBlock.height -
+        //     offset +
+        //     0.01;
+        //   break;
+        // }
+      }
+    }
   }
   switchSprite(key) {
     if (this.image === this.animations[key].image || !this.loaded) return;
+    this.currentFrame = 0;
     this.image = this.animations[key].image;
     this.frameBuffer = this.animations[key].frameBuffer;
     this.frameRate = this.animations[key].frameRate;
