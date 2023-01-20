@@ -7,6 +7,7 @@ class Player extends Sprite {
     frameRate,
     scale = 0.5,
     animations,
+    jumpsLeft = 1,
   }) {
     super({ imageSrc, frameRate, scale });
     this.position = position;
@@ -134,6 +135,7 @@ class Player extends Sprite {
     //gravity is global value
     if (this.velocity.y < platformHeight) this.velocity.y += gravity;
     this.position.y += this.velocity.y;
+    this.jumpsLeft = 0;
   }
 
   checkVerticalCollision() {
@@ -144,6 +146,7 @@ class Player extends Sprite {
         //setup for ground collision
         if (this.velocity.y > 0) {
           this.velocity.y = 0;
+          this.jumpsLeft = 1;
           const offset =
             this.hitbox.position.y - this.position.y + this.hitbox.height;
           this.position.y = collisionBlock.position.y - offset - 0.01;
@@ -152,6 +155,7 @@ class Player extends Sprite {
         //setup for ceiling collision
         if (this.velocity.y < 0) {
           this.velocity.y = 0;
+          this.jumpsLeft = 1;
           const offset = this.hitbox.position.y - this.position.y;
           this.position.y =
             collisionBlock.position.y + collisionBlock.height - offset + 0.01;
@@ -171,6 +175,7 @@ class Player extends Sprite {
         //setup for platform collision
         if (this.velocity.y > 0) {
           this.velocity.y = 0;
+          this.jumpsLeft = 1;
           const offset =
             this.hitbox.position.y - this.position.y + this.hitbox.height;
           this.position.y = platformCollisionBlock.position.y - offset - 0.01;
@@ -192,12 +197,13 @@ class Player extends Sprite {
 
   switchSprite(key) {
     if (this.image === this.animations[key].image || !this.loaded) return;
-    this.faceDirection === "right"
-      ? (this.currentFrame = 0)
-      : (this.currentFrame = this.animations[key].frameRate - 1);
     this.image = this.animations[key].image;
     this.frameBuffer = this.animations[key].frameBuffer;
     this.frameRate = this.animations[key].frameRate;
+    if (this.faceDirection === "right") {
+      this.currentFrame = 0;
+      return;
+    } else this.currentFrame = this.animations[key].frameRate - 1;
   }
 
   move() {
