@@ -15,3 +15,9 @@ function platformCollision({ object1, object2 }) {
     object1.position.x + object1.width >= object2.position.x
   );
 }
+
+function checkJumsLeft(obj) {
+  if (obj.jumpsLeft == 0) return;
+  obj.velocity.y = -5;
+  obj.jumpsLeft = 0;
+}
