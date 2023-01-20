@@ -122,6 +122,7 @@ const camera = {
 };
 function animation() {
   window.requestAnimationFrame(animation);
+
   /*------------------<DEV>------------------
   //clear canvas
   c.fillStyle = "#333333";
@@ -133,6 +134,7 @@ function animation() {
   c.scale(4, 4);
   c.translate(camera.position.x, camera.position.y);
   background.update();
+
   /*------------------<DEV>------------------
   //draw collision blocks
   collisionBlocks.forEach((collisionBlock) => {
@@ -142,6 +144,7 @@ function animation() {
     collisionBlock.update();
   });
    ------------------</DEV>------------------*/
+
   player.update();
   c.restore();
 }
@@ -158,10 +161,10 @@ window.addEventListener("keydown", (e) => {
       player.shouldPanCameraToTheLeft({ canvas: scaledCanvas, camera });
       break;
     case "KeyW":
-      player.velocity.y = -5;
+      checkJumsLeft(player);
       break;
     case "Space":
-      player.velocity.y = -5;
+      checkJumsLeft(player);
       break;
   }
 });
